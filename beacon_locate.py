@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+GRADIENT_INF = 1e7
 
 def error_function(theta, X, y):
     '''error function J definition
@@ -14,19 +15,26 @@ def gradient_function(theta, X, y):
     diff = np.dot(X, theta) - y
     return (1./len(y)) * np.dot(np.transpose(X), diff)
 
-def gradient_descent(X, y, init_theta, alpha):
+def gradient_descent(X, y, init_theta, alpha, 
+                     epsilon=1e-5, 
+                     max_iterations=None):
     '''perform gradient descent
     '''
     theta = init_theta
     gradient = gradient_function(theta, X, y)
-    while not np.all(np.absolute(gradient) <= 1e-5):
+    i = 0
+    while not np.all(np.absolute(gradient) <= epsilon):
         theta = theta - alpha*gradient
         gradient = gradient_function(theta, X, y)
-        if np.any(np.absolute(gradient) > 1e7):
+        if np.any(np.absolute(gradient) > GRADIENT_INF):
             print("error!!! can not converge!!!")
             print(gradient)
             break;
 
+        i += 1
+        if not max_iterations == None and i > max_iterations: 
+            print("reach max iterations, stop!")
+            break
     return theta
 
 
@@ -37,6 +45,7 @@ if __name__ == "__main__":
     y = []
     # get trainin data
     # 2*(x1-x0)x + 2*(y1-y0)y = r0^2-r1^2-(x0^2-x1^2)-(y0^2-y1^2)
+    # theta0*x1 + theta1*x2 = y
     for i in range(len(points)-1):
         xi = points[i, 0]
         xk = points[i+1, 0]
@@ -49,16 +58,22 @@ if __name__ == "__main__":
         X.append([x1, x2])
         y.append(ri*ri - rk*rk - (xi*xi-xk*xk) - (yi*yi - yk*yk))
 
-    
     X = np.array(X)
     y = np.array(y).reshape(len(y),1)
     print X
     print y
+
+    # params
     learning_rate = 0.0001
+    epsilon = 1e-5
     init_theta = np.array([35,20]).reshape(2,1)
-    optimal = gradient_descent(X, y, init_theta, learning_rate)
+
+    # graient descent
+    optimal = gradient_descent(X, y, init_theta, learning_rate, 
+                               epsilon=epsilon)
     print("optimal: ", optimal)
 
+    # plot
     if True:
         fig = plt.figure()
         axes = fig.add_subplot(111)

@@ -5,6 +5,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+GRADIENT_INF = 1e7
+
+
 def error_function(theta, X, y):
     '''
         error function J definition
@@ -19,17 +22,17 @@ def gradient_function(theta, X, y):
     return (1./len(y)) * np.dot(np.transpose(X), diff)
 
 def gradient_descent(X, y, init_theta, alpha, 
-                     max_iterations=None, error=1e-5):
+                     max_iterations=None, epsilon=1e-5):
     '''
     perform gradient descent
     '''
     theta = init_theta
     gradient = gradient_function(theta, X, y)
     i = 0
-    while not np.all(np.absolute(gradient) <= error):
+    while not np.all(np.absolute(gradient) <= epsilon):
         theta = theta - alpha*gradient
         gradient = gradient_function(theta, X, y)
-        if np.any(np.absolute(gradient) > 1e7):
+        if np.any(np.absolute(gradient) > GRADIENT_INF):
             print("error!!! can not converge!!!")
             print(gradient)
             exit(-1)
@@ -55,13 +58,13 @@ if __name__ == "__main__":
     # initialize params
     init_theta = np.array([0,0]).reshape(2,1)
     learning_rate = 0.000001
-    error = 1
+    epsilon = 1
     max_iterations = 10000
 
     print("start gradient decent with error {}".format(error_function(init_theta, X, y)))
     print("Running ...")
     optimal_theta = gradient_descent(X, y, init_theta, learning_rate, 
-            max_iterations=max_iterations, error=error)
+            max_iterations=max_iterations, epsilon=epsilon)
     print("Optimal params: \n{}".format(optimal_theta))
     print("Error: {}".format(error_function(optimal_theta, X, y)))
 
