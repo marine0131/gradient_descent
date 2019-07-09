@@ -1,8 +1,13 @@
+'''
+    auther: whj
+    linear repression using gradient descent
+'''
 import numpy as np
 import matplotlib.pyplot as plt
 
 def error_function(theta, X, y):
-    '''error function J definition
+    '''
+        error function J definition
     '''
     diff = np.dot(X, theta) - y
     return (1./(2*len(y))) * np.dot(np.transpose(diff), diff)
@@ -13,8 +18,10 @@ def gradient_function(theta, X, y):
     diff = np.dot(X, theta) - y
     return (1./len(y)) * np.dot(np.transpose(X), diff)
 
-def gradient_descent(X, y, init_theta, alpha, max_iterations=None, error=1e-5):
-    '''perform gradient descent
+def gradient_descent(X, y, init_theta, alpha, 
+                     max_iterations=None, error=1e-5):
+    '''
+    perform gradient descent
     '''
     theta = init_theta
     gradient = gradient_function(theta, X, y)
@@ -28,22 +35,24 @@ def gradient_descent(X, y, init_theta, alpha, max_iterations=None, error=1e-5):
             exit(-1)
 
         i += 1
-        if not max_iterations==None and i > max_iterations: 
+        if not max_iterations == None and i > max_iterations: 
             print("reach max iterations, stop!")
-            break;
+            break
 
     return theta
 
 
 if __name__ == "__main__":
-    # points with format (x,y)
+    # read data from file, points with format (x,y)
     points = np.genfromtxt("data.csv", delimiter=",")
 
+    # preprocess data
     X0 = np.ones((len(points), 1))
     X1 = points[:, 0].reshape(len(points), 1)
     X =  np.hstack((X0, X1))
     y = points[:, 1].reshape(len(points), 1)
 
+    # initialize params
     init_theta = np.array([0,0]).reshape(2,1)
     learning_rate = 0.000001
     error = 1
@@ -56,6 +65,7 @@ if __name__ == "__main__":
     print("Optimal params: \n{}".format(optimal_theta))
     print("Error: {}".format(error_function(optimal_theta, X, y)))
 
+    # plot the result
     if True:
         fig = plt.figure()
         axes = fig.add_subplot(111)
